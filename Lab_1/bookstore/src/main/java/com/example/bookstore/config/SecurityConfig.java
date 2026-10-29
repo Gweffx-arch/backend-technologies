@@ -24,10 +24,9 @@ import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity // AC 7: Вмикає підтримку @PreAuthorize
+@EnableMethodSecurity
 public class SecurityConfig {
 
-    // 1. Ланцюг для REST API (JWT автентифікація) - AC 5, AC 6
     @Bean
     @Order(1)
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -36,7 +35,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // AC 6: Обмеження на рівні SecurityFilterChain (DELETE вимагає роль ADMIN)
+
                         .requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
@@ -47,7 +46,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // 2. Ланцюг для браузерного UI (OIDC автентифікація) - AC 4
     @Bean
     @Order(2)
     public SecurityFilterChain uiSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -63,7 +61,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // Конвертер для витягування ролей з Keycloak realm_access.roles
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         Converter<Jwt, Collection<GrantedAuthority>> realmAccessConverter = jwt -> {

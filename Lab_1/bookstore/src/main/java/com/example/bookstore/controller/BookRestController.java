@@ -28,7 +28,6 @@ public class BookRestController {
         return service.findById(id);
     }
 
-    // AC 7: Обмеження доступу через @PreAuthorize (тільки з роллю ADMIN)
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
@@ -41,7 +40,6 @@ public class BookRestController {
         return service.update(id, dto);
     }
 
-    // AC 6: Обмеження на DELETE налаштовано в SecurityFilterChain
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
