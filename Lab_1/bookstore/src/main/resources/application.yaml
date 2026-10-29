@@ -1,0 +1,42 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: bookstore
+  datasource:
+    url: jdbc:h2:mem:bookstoredb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
+
+  #OIDC для Keycloak
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: bookstore-client
+            client-secret: dDYfZLs5hcZm0PPH2LPJuhcTlhyj6KQL4fPCckG4mXeYbTJ4bHyKGXUwKsMYplYAU73ZMZwkbiYUZzMtEpfhko
+            scope: openid, profile, email, roles
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8180/realms/bookstore-realm
+            user-name-attribute: preferred_username
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/bookstore-realm
